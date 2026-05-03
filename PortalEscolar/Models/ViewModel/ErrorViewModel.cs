@@ -1,4 +1,4 @@
-namespace PortalEscolar.Models
+namespace PortalEscolar.Models.ViewModel
 {
     public class ErrorViewModel
     {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using PortalEscolar.Models;
 
-namespace PortalEscolar.Models;
+namespace PortalEscolar.Data;
 
 public partial class PortalescolarContext : DbContext
 {

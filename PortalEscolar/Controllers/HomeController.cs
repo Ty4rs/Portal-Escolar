@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PortalEscolar.Models;
+using PortalEscolar.Models.ViewModel;
 using System.Diagnostics;
 
 namespace PortalEscolar.Controllers
