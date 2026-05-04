@@ -7,7 +7,6 @@ using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
 using PortalEscolar.Models;
-using System;
 
 namespace PortalEscolar.Services
 {

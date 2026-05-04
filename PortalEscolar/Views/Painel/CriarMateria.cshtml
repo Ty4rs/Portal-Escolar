@@ -1,0 +1,12 @@
+﻿
+@model PortalEscolar.Models.Materia
+@{
+}
+
+<h2>Criar Materia: </h2>
+<form asp-action="CadastrarMateria" asp-asp-controller="painel" method="post">
+    <input type="text" aspfor="Nome" id="Nome" name="Nome">
+    <input type="number" aspfor="Cargahoraria" id="Cargahoraria" name="Cargahoraria">
+    <input type="submit" value="Criar Matéria">
+</form>
+

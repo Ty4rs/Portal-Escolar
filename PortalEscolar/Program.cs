@@ -13,6 +13,7 @@ builder.Services.AddDbContext<PortalescolarContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor(); //Dizendo que os meus Servicos podem acessar os meus cookies, para pegar o id do usuario logado, por exemplo.
 builder.Services.AddScoped<IUsuarioService, UsuarioService>(); //Adicionando um servico que eu criei
+builder.Services.AddScoped<IMateriaService, MateriaService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 { //Adicionando o Cookie como forma de autenticação

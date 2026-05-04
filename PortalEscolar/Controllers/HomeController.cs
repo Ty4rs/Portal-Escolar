@@ -21,8 +21,7 @@ namespace PortalEscolar.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var usuarios = await _context.Usuarios.Include(u=> u.Professore).Include(u=>u.Aluno).ToListAsync();
-            return View(usuarios);
+            return View();
         }
         [Authorize]
         public IActionResult Privacy()

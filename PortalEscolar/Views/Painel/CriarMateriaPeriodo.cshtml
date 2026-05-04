@@ -1,0 +1,10 @@
+﻿@model PortalEscolar.Views.ViewModel.MateriasViewModel
+@{
+}
+
+<form asp-action="CadastrarMateriaPeriodo" asp-controller="painel">
+    
+    <select asp-for="idMateria" class="form-control" asp-items="Model.materias"></select>
+    <input type="text" asp-for="Model.materias">
+</form>
+
