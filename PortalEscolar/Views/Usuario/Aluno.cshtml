@@ -1,0 +1,23 @@
+﻿@model PortalEscolar.Models.Aluno;
+@{
+}
+
+<form asp-action="cadastrarAluno" asp-controller="Usuario" method="post">
+    <span asp-validation-for="IdUsuario" class="text-danger col-12"></span>
+    <label asp-for="Nome">Nome: </label>
+    <input type="text" asp-for="Nome">
+
+    <label asp-for="Cpf">CPF: </label>
+    <input type="text" asp-for="Cpf">
+
+    <label asp-for="DataNascimento">Data de Nascimento: </label>
+    <input type="date" asp-for="DataNascimento">
+
+    <label asp-for="Endereco">Endereço: </label>
+    <input type="text" asp-for="Endereco">
+
+    <label asp-for="Telefone">Telefone: </label>
+    <input type="text" asp-for="Telefone">
+
+    <input type="submit" value="Cadastrar Aluno">
+</form>

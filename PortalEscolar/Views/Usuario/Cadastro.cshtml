@@ -1,0 +1,29 @@
+﻿@model PortalEscolar.Models.Usuario;
+@{
+    ViewData["Title"] = "Cadastro";
+}
+
+
+<form asp-action="Cadastrar" asp-controller="Usuario" method="post">
+    <label asp-for="Email">Email:</label>
+    <span asp-validation-for="Email" class="text-danger col-12"></span>
+    <input asp-for="Email" class="form-control" type="email" >
+    <!-- Agora o ASP.NET sabe exatamente de onde ler o erro -->
+    
+
+    <label asp-for="Senha">Senha:</label> <span asp-validation-for="Senha" class="text-danger"></span>
+    <input asp-for="Senha" type="password" class="form-control">
+   
+
+    <fieldset>
+        <label asp-for="TipoUsuario">Aluno</label>
+        <input type="radio" asp-for="TipoUsuario" Value="ALUNO" checked>
+        <label asp-for="TipoUsuario">Professor</label>
+        <input type="radio" asp-for="TipoUsuario" Value="PROFESSOR">
+    </fieldset>
+
+    <input type="submit" value="Cadastrar Usuário" class="btn btn-primary">
+
+    <p>
+        Já tem uma conta? <a asp-action="Login" asp-controller="Usuario">Faça login aqui</a>.</p>
+</form>

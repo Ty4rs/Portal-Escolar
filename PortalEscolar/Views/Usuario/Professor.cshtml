@@ -1,0 +1,22 @@
+﻿@model PortalEscolar.Models.Professore;
+@{
+}
+
+<form asp-action="cadastrarProfessor" asp-controller="Usuario" method="post">
+    <label asp-for="Nome">Nome: </label>
+    <input type="text" asp-for="Nome">
+
+    <label asp-for="Cpf">CPF: </label>
+    <input type="text" asp-for="Cpf">
+
+    <label asp-for="Formacao">Formação: </label>
+    <input type="text" asp-for="Formacao">
+
+    <label asp-for="Salario">Salario: </label>
+    <input type="text" asp-for="Salario">
+
+    <label asp-for="Telefone">Telefone: </label>
+    <input type="text" asp-for="Telefone">
+
+    <input type="submit" value="Cadastrar Professor">
+</form>
