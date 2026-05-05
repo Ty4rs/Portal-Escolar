@@ -1,0 +1,32 @@
+﻿@model List<PortalEscolar.Views.ViewModel.GerenciarAvaliacoesViewModel>
+
+<div class="container mt-4">
+    <h2>Avaliações Lançadas</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Matéria</th>
+                <th>Notas Lançadas</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Data.ToShortDateString()</td>
+                    <td>@item.NomeMateria</td>
+                    <td>@item.TotalAlunos alunos</td>
+                    <td>
+                        <form asp-action="DeletarAvaliacao" method="post">
+                            <input type="hidden" name="idMateriaPeriodo" value="@item.IdMateriaPeriodo" />
+                            <input type="hidden" name="data" value="@item.Data.ToString("yyyy-MM-dd")" />
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir Avaliação</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

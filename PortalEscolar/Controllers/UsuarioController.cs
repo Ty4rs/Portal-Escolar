@@ -115,7 +115,13 @@ namespace PortalEscolar.Controllers
                 return RedirectToAction("aluno", "usuario");
             }
             await _usuarioService.MatricularAluno(alunoModel, UserId);
-            return RedirectToAction("aluno", "usuario");
+            return RedirectToAction("index", "painel");
+        }
+
+        public async Task<IActionResult> Deslogar()
+        {
+            await _usuarioService.Deslogar();
+            return RedirectToAction("login", "usuario");
         }
 
         [HttpPost]
@@ -128,7 +134,7 @@ namespace PortalEscolar.Controllers
             }
             else
             {
-                return RedirectToAction("index", "usuario");
+                return RedirectToAction("login", "usuario");
             }
         }
 

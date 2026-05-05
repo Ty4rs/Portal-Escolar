@@ -5,6 +5,7 @@ using PortalEscolar.Models;
 using PortalEscolar.Services;
 using PortalEscolar.Views.ViewModel;
 using System.Security.Claims;
+using System.Linq;
 
 
 namespace PortalEscolar.Controllers
@@ -71,16 +72,41 @@ namespace PortalEscolar.Controllers
         [Authorize(Roles = "ALUNO")]
         public async Task<IActionResult> CadastrarMatriculaMateria()
         {
-            var materiasPeriodos = await _materiaService.ListarMateriasPeriodos();
-            //Continuar amanhã
+
+            var materiasLista = await _materiaService.ListarMaterias();
+            var materiasperiodos = await _materiaService.ListarMateriasPeriodos();
+            var materias2 = materiasperiodos.Join(materiasLista, mp => mp.IdMateria,
+                m=> m.IdMateria,
+                (mp,m) => new
+                {
+                    IdMateriaPeriodo = mp.IdMateriaPeriodo,
+                    NomeMateria = m.Nome
+                }
+                ).ToList();
+
 
             MatriculaMateriaViewModel materias = new MatriculaMateriaViewModel()
             {
-                _materiaPeriodo = new SelectList(materiasPeriodos, "IdMateriaPeriodo", "NomeDaMateria")
+                materiasPeriodos = new SelectList(
+                    materias2.Select(m => new
+                    {
+                        Text = m.NomeMateria,
+                        Value = m.IdMateriaPeriodo
+                    }), "Value", "Text")
             };
-            return View(materias2);
-
             return View(materias);
+
+        }
+        [Authorize(Roles = "ALUNO")]
+        [HttpPost]
+        public async Task<IActionResult> CadastroMatriculaMateria(MatriculaMateriaViewModel matriculaMateria)
+        {
+            int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (await _materiaService.CadastrarMatriculaMateria(matriculaMateria, idUsuario))
+            {
+                return RedirectToAction("index", "painel");
+            }
+            return RedirectToAction("CadastrarMatriculaMateria", "painel");
         }
 
     }

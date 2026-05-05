@@ -1,12 +1,19 @@
-﻿@page
-@model PortalEscolar.Views.Usuario.LoginModel
+﻿@model PortalEscolar.Models.Usuario
 @{
+    ViewData["LinkDisplay"] = true;
 }
 
-<<form action="/Usuario/Logar" method="post"> 
-   
-    <input type="email" name="email" id="email">
-    <input type="password" name="senha", id="senha">
-    <input type="submit" value="Enviar">
-</form>
 
+
+
+<div class="d-flex justify-content-center align-items-center container-fluid vh-100" style="margin-top:-3rem">
+    <form asp-action="Logar" asp-controller="Usuario" method="post" class="d-flex flex-column gap-1 form-control-sm bg-light" >
+        <label asp-for="Email" >Email:</label>
+        <input asp-for="Email" class="form-control" id="Email">
+        <label asp-for="Senha">Senha:</label>
+        <input type="password" class="form-control" asp-for="Senha" id="Senha">
+        <input type="submit" value="Logar" class="btn text-bg-primary" style="margin-top: 0.7rem;">
+        <p>Não tem uma conta? <a asp-action="Cadastro" asp-controller="Usuario">Faça seu cadastro</a>.</p>
+    </form>
+
+</div>

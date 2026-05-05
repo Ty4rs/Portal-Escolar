@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<PortalescolarContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -17,7 +18,7 @@ builder.Services.AddScoped<IMateriaService, MateriaService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 { //Adicionando o Cookie como forma de autenticação
-    options.LoginPath = "/Usuario/Login"; options.AccessDeniedPath = "/Usuario/AcessoNegado";  //Redirecionando caso o usuario acesse uma página não permitida, por estar deslogado ou não ter acesso.
+    options.LoginPath = "/Usuario/Login"; options.AccessDeniedPath = "/Painel";  //Redirecionando caso o usuario acesse uma página não permitida, por estar deslogado ou não ter acesso.
 });
 var app = builder.Build();
 
@@ -40,7 +41,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Painel}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 

@@ -1,0 +1,15 @@
+﻿
+@model PortalEscolar.Views.ViewModel.MateriaAlunoViewModel
+@{
+}
+eitass
+@foreach (var materia in Model.Materias)
+{
+    <p>aa</p>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@materia.NomeMateria</h5>
+            <p class="card-text">Sala: @materia.Sala</p>
+        </div>
+    </div> 
+}
