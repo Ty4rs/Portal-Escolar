@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
 using PortalEscolar.Models;
+using PortalEscolar.Views.ViewModel;
 
 namespace PortalEscolar.Services
 {
@@ -19,7 +20,9 @@ namespace PortalEscolar.Services
         Task<bool> CriarUsuario(string Email, string Senha, string TipoUsuario);
         
         Task<bool> CriarProfessor(string nome, string cpf, string formacao, decimal salario, string telefone, int idUsuario);
-        Task<bool> CriarAluno(string nome, string cpf, DateTime dataNascimento, string endereco, string telefone, int idUsuario);
+        Task<bool> CriarAluno(AlunoViewModel alunoModel, int UserId);
+
+        Task<bool> MatricularAluno(AlunoViewModel alunoModel, int UserId);
     }
     public class UsuarioService : IUsuarioService
     {
@@ -118,18 +121,38 @@ namespace PortalEscolar.Services
             return true;
         }
 
-        public async Task<bool> CriarAluno(string nome, string cpf, DateTime dataNascimento, string endereco, string telefone, int idUsuario)
+        public async Task<bool> CriarAluno(AlunoViewModel alunoModel, int UserId)
         {
             
-            if(await _context.Alunos.AnyAsync(p=> p.IdUsuario == idUsuario))
+            if(await _context.Alunos.AnyAsync(p=> p.IdUsuario == UserId))
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(alunoModel.Nome) || 
+                string.IsNullOrWhiteSpace(alunoModel.Cpf) || 
+                string.IsNullOrWhiteSpace(alunoModel.Telefone) || 
+                string.IsNullOrWhiteSpace(alunoModel.Endereco) ||
+                alunoModel.DataNascimento == default)
             {
                 return false;
             }
             Aluno aluno = new Aluno()
             {
-               Nome=nome, Cpf=cpf, DataNascimento = DateOnly.FromDateTime(dataNascimento), Telefone=telefone, IdUsuario=idUsuario, Endereco=endereco
+               Nome=alunoModel.Nome, Cpf=alunoModel.Cpf, DataNascimento = DateOnly.FromDateTime(alunoModel.DataNascimento), Telefone=alunoModel.Telefone, IdUsuario= UserId, Endereco=alunoModel.Endereco
             };
+            
             await _context.Alunos.AddAsync(aluno);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> MatricularAluno(AlunoViewModel alunoModel, int UserId)
+        {
+            Aluno aluno = await _context.Alunos.FirstOrDefaultAsync(a=> a.IdUsuario == UserId);
+            Matricula matricula = new Matricula()
+            {
+                IdCurso = alunoModel.IdCurso, DataMatricula = DateOnly.FromDateTime(DateTime.Now), IdAluno = aluno.IdAluno
+            };
+            await _context.Matriculas.AddAsync(matricula);
             await _context.SaveChangesAsync();
             return true;
         }

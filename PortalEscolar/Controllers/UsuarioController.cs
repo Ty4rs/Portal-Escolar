@@ -2,16 +2,20 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PortalEscolar.Services;
+using PortalEscolar.Views.ViewModel;
 namespace PortalEscolar.Controllers
 {
     public class UsuarioController : Controller
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly IMateriaService _materiaService;
 
-        public UsuarioController(IUsuarioService UsuarioService)
+        public UsuarioController(IUsuarioService UsuarioService, IMateriaService MateriaServices)
         {
             _usuarioService = UsuarioService;
+            _materiaService = MateriaServices;
         }
         public IActionResult Index()
         {
@@ -81,23 +85,36 @@ namespace PortalEscolar.Controllers
         }
         [Authorize(Roles ="ALUNO")]
         public async Task<IActionResult> Aluno()
+        
         {
             if (TempData["ErrorAluno"] != null)
             {
                 ModelState.AddModelError("IdUsuario", TempData["ErrorAluno"].ToString());
             }
-            return View();
+
+            var cursosc = await _materiaService.ListarCursos();
+            AlunoViewModel alunoModel = new AlunoViewModel()
+            {
+                cursos = new SelectList(
+                    cursosc.Select(m => new
+                    {
+                        Text = m.Nome,
+                        Value = m.IdCurso
+                    }), "Value", "Text")
+            };
+            return View(alunoModel);
         }
         [HttpPost]
-        public async Task<IActionResult> cadastrarAluno(string Nome, string Cpf, DateTime DataNascimento, string Endereco, string teledone)
+        public async Task<IActionResult> cadastrarAluno(AlunoViewModel alunoModel)
         {
             TempData["ErrorAluno"] = null;
             int UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            if(!await _usuarioService.CriarAluno(Nome, Cpf, DataNascimento, Endereco, teledone, UserId))
+            if(!await _usuarioService.CriarAluno(alunoModel, UserId))
             {
                 TempData["ErrorAluno"] = "Aluno já cadastrado!";
                 return RedirectToAction("aluno", "usuario");
             }
+            await _usuarioService.MatricularAluno(alunoModel, UserId);
             return RedirectToAction("aluno", "usuario");
         }
 

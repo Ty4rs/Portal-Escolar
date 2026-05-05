@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
 using PortalEscolar.Models;
+using PortalEscolar.Views.ViewModel;
 
 namespace PortalEscolar.Services
 {
@@ -14,6 +15,12 @@ namespace PortalEscolar.Services
         Task<bool> VerificarMateria(string nome, int cargaHoraria);
         Task<bool> CadastrarMateria(string nome, int cargaHoraria);
         Task<List<Materia>> ListarMaterias();
+        Task<List<Periodo>> ListarPeriodos();
+        Task<List<Curso>> ListarCursos();
+
+        Task<bool> CadastrarMateriaPeriodo(MateriasViewModel materiaPeriodo, int IdProfessor);
+        Task<bool> ListarMateriasPeriodos();
+
     }
     public class MateriaService : IMateriaService
     {
@@ -24,7 +31,7 @@ namespace PortalEscolar.Services
         }
         public async Task<bool> VerificarMateria(string nome, int cargaHoraria)
         {
-            if(await _context.Materias.AnyAsync(m=>m.Nome == nome) || await _context.Materias.AnyAsync(m=> m.Cargahoraria == cargaHoraria))
+            if(await _context.Materias.AnyAsync(m=>m.Nome == nome))
             {
                 return true;
             }
@@ -46,7 +53,40 @@ namespace PortalEscolar.Services
         {
             return await _context.Materias.ToListAsync();
         }
+        public async Task<List<Curso>> ListarCursos()
+        {
+            return await _context.Cursos.ToListAsync();
+        }
+        public async Task<List<Periodo>> ListarPeriodos()
+        {
+            return await _context.Periodos.ToListAsync();
+        }
 
+        public async Task<bool> CadastrarMateriaPeriodo(MateriasViewModel materiaPeriodo, int IdProfessor)
+        {
+            if(materiaPeriodo.Sala == null )
+            {
+                return false;
+            }
+            var idProff = await _context.Professores.FirstAsync(p => p.IdUsuario == IdProfessor);
+            IdProfessor = idProff.IdProfessor;
+            MateriasPeriodo _materiaPeriodo = new MateriasPeriodo()
+            {
+                IdMateria = materiaPeriodo.idMateria,
+                IdPeriodo = materiaPeriodo.IdPeriodo,
+                IdProfessor = IdProfessor,
+                Sala = materiaPeriodo.Sala
 
+            };
+            await _context.MateriasPeriodos.AddAsync(_materiaPeriodo);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<MateriasPeriodo>> ListarMateriasPeriodos()
+        {
+            return await _context.MateriasPeriodos.ToListAsync();
+        }
     }
+        
 }

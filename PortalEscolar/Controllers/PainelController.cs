@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PortalEscolar.Models;
 using PortalEscolar.Services;
 using PortalEscolar.Views.ViewModel;
+using System.Security.Claims;
 
 
 namespace PortalEscolar.Controllers
@@ -34,10 +35,11 @@ namespace PortalEscolar.Controllers
            
             return RedirectToAction("criarMateria", "painel");
         }
-
+        [Authorize(Roles = "PROFESSOR")]
         public async Task<IActionResult> CriarMateriaPeriodo(int Cargahoraria)
         {
             List<Materia> materiasc = await _materiaService.ListarMaterias();
+            List<Periodo> periodos = await _materiaService.ListarPeriodos();
 
             MateriasViewModel materias2 = new MateriasViewModel()
             {
@@ -47,9 +49,38 @@ namespace PortalEscolar.Controllers
                         Text = m.Nome,
                         Value = m.IdMateria
                     }), "Value", "Text"),
-                
+                periodos = new SelectList(
+                    periodos.Select(m => new
+                    {
+                        Text = m.Nome,
+                        Value = m.IdPeriodo
+                    }), "Value", "Text")
             };
             return View(materias2);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CadastrarMateriaPeriodo(MateriasViewModel MateriaPeriodo)
+        {
+            int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (await _materiaService.CadastrarMateriaPeriodo(MateriaPeriodo, idUsuario))
+            {
+                return RedirectToAction("index", "painel");
+            }
+            return RedirectToAction("CriarMateriaPeriodo", "painel");
+        }
+        [Authorize(Roles = "ALUNO")]
+        public async Task<IActionResult> CadastrarMatriculaMateria()
+        {
+            var materiasPeriodos = await _materiaService.ListarMateriasPeriodos();
+            //Continuar amanhã
+
+            MatriculaMateriaViewModel materias = new MatriculaMateriaViewModel()
+            {
+                _materiaPeriodo = new SelectList(materiasPeriodos, "IdMateriaPeriodo", "NomeDaMateria")
+            };
+            return View(materias2);
+
+            return View(materias);
         }
 
     }

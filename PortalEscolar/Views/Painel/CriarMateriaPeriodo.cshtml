@@ -2,9 +2,16 @@
 @{
 }
 
-<form asp-action="CadastrarMateriaPeriodo" asp-controller="painel">
+<div class="">
+    <form asp-action="CadastrarMateriaPeriodo" asp-controller="painel" class="d-flex flex-column justify-content-center">
+        <label asp-for="idMateria">Matéria:</label>
+        <select asp-for="idMateria" class="form-control" asp-items="Model.materias"></select>
+        <label asp-for="IdPeriodo">Período:</label>
+        <select asp-for="IdPeriodo" class="form-control" asp-items="Model.periodos"></select>
+        <label asp-for="Sala">Sala: </label>
+        <input type="text" asp-for="Sala">
     
-    <select asp-for="idMateria" class="form-control" asp-items="Model.materias"></select>
-    <input type="text" asp-for="Model.materias">
-</form>
+        <input type="submit" value="Cadastrar Matéria">
+    </form>
+</div>
 
