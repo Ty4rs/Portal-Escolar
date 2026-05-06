@@ -1,8 +1,8 @@
 ﻿@model PortalEscolar.Views.ViewModel.AlunoViewModel;
 @{
 }
-<div class="d-flex justify-content-center align-items-center vh-100 " style="margin-top:-3rem; width:110vw;">
-    <form asp-action="cadastrarAluno" asp-controller="Usuario" method="post" class="d-flex flex-column gap-1 w-25 form-control-sm p-3 card">
+<div class="d-flex justify-content-center align-items-center vh-100 " style="margin-top:-3rem;">
+    <form asp-action="cadastrarAluno" asp-controller="Usuario" method="post" class="d-flex flex-column gap-1  form-control p-3 card w-25" >
     <span asp-validation-for="idUsuario" class="text-danger col-12"></span>
     <label asp-for="Nome">Nome: </label>
     <input type="text" asp-for="Nome">

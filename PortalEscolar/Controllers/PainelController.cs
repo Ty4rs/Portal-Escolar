@@ -22,7 +22,7 @@ namespace PortalEscolar.Controllers
         {
             return View();
         }
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PROFESSOR")]
         public IActionResult CriarMateria()
         {
             return View();
@@ -131,7 +131,7 @@ namespace PortalEscolar.Controllers
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             if (await _materiaService.CadastrarMatriculaMateria(matriculaMateria, idUsuario))
             {
-                return RedirectToAction("index", "materias");
+                return RedirectToAction("index", "materia");
             }
             TempData["MensagemErro"] = "Já está matriculado nesta matéria.";
             return RedirectToAction("CadastrarMatriculaMateria", "painel");

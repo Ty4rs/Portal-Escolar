@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-Br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,16 +23,24 @@
                     </a>
                     <hr>
 
-                    <!-- Links de Navegação -->
+
                 <ul class="nav nav-pills flex-column flex-grow-1">
 
                         @if (User.IsInRole("PROFESSOR"))
                         {
+                        <li class="nav-item">
+                            <a asp-action="CriarMateria" asp-controller="painel" class="nav-link text-white">
+                                Criar uma matéria
+                            </a>
+                        </li>
                             <li class="nav-item">
                                 <a asp-action="CriarMateriaPeriodo" asp-controller="painel" class="nav-link text-white">
-                                    Cadastrar uma matéria
+                                    Cadastrar uma matéria - Período
                                 </a>
                             </li>
+
+                        
+                            
                         }
                         
                         <li>

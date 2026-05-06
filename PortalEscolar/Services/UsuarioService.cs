@@ -37,7 +37,7 @@ namespace PortalEscolar.Services
 
         public async Task<bool> Logar(string Email, string Senha)
         {
-            var usuario = _context.Usuarios.Include(u => u.Aluno).Include(u=> u.Professore).Include(u=> u.Administradore).FirstOrDefault(u => u.Email == Email && u.Senha == Senha); // Verifica se existe esse usuario com esse email se senha.
+            var usuario = _context.Usuarios.Include(u => u.Aluno).Include(u=> u.Professore).Include(u=> u.Administradore).FirstOrDefault(u => u.Email == Email && u.Senha == Senha);
 
             string nomeUsuario = "user";
             

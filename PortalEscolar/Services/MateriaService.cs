@@ -183,7 +183,7 @@ namespace PortalEscolar.Services
                     Sala = mp.Sala
                 }).ToList();
 
-            // 3. Retorna o ViewModel principal contendo a lista populada
+            
             return new MateriaProfessorViewModel
             {
                 Materias = listaResultado
@@ -290,15 +290,15 @@ namespace PortalEscolar.Services
 
         public async Task<BoletimAlunoViewModel> GerarBoletimAluno(int idUsuario)
         {
-            // 1. Descobre quem é o Aluno a partir do Usuário logado
+            
             var aluno = await _context.Alunos.FirstOrDefaultAsync(a => a.IdUsuario == idUsuario);
 
-            // Se não for aluno, retorna boletim vazio para não dar erro
+            
             if (aluno == null) return new BoletimAlunoViewModel { ListaBoletim = new List<BoletimAlunoViewModel>() };
 
-            // 2. Faz a busca usando o IdAluno real
+
             var dados = await _context.MatriculasMaterias
-                .Where(mm => mm.IdMatriculaNavigation.IdAluno == aluno.IdAluno) // AQUI ESTAVA O ERRO DE LÓGICA
+                .Where(mm => mm.IdMatriculaNavigation.IdAluno == aluno.IdAluno)
                 .Select(mm => new BoletimAlunoViewModel
                 {
                     NomeMateria = mm.IdMateriaPeriodoNavigation.IdMateriaNavigation.Nome,
@@ -314,12 +314,12 @@ namespace PortalEscolar.Services
             return new BoletimAlunoViewModel { ListaBoletim = dados };
         }
 
-        // Lista as avaliações agrupadas por data para o professor ver o que já "criou"
+
         public async Task<List<GerenciarAvaliacoesViewModel>> ListarHistoricoAvaliacoes(int idUsuario)
         {
             Professore idProfessorC = await _context.Professores.FirstAsync(p => p.IdUsuario == idUsuario);
             int idProfessor = idProfessorC.IdProfessor;
-            // 1. Busca os dados brutos no banco com os Includes necessários
+
             var avaliacoesDoProfessor = await _context.Avaliacoes
                 .Include(a => a.IdMatriculaMateriaNavigation)
                     .ThenInclude(mm => mm.IdMateriaPeriodoNavigation)
@@ -327,8 +327,6 @@ namespace PortalEscolar.Services
                 .Where(a => a.IdMatriculaMateriaNavigation.IdMateriaPeriodoNavigation.IdProfessor == idProfessor)
                 .ToListAsync();
 
-            // 2. Se a lista estiver vazia AQUI, o problema é o 'idProfessor' (veja o item 2 abaixo).
-            // Se não, o C# agrupa os dados em memória, evitando erros de SQL.
             var historico = avaliacoesDoProfessor
                 .GroupBy(a => new
                 {
@@ -348,8 +346,6 @@ namespace PortalEscolar.Services
 
             return historico;
         }
-
-        // Exclui todas as notas de uma matéria em uma data específica
         public async Task<bool> ExcluirAvaliacaoCompleta(int idMateriaPeriodo, DateTime data)
             {
                 var notasParaRemover = await _context.Avaliacoes

@@ -20,7 +20,6 @@
         public DateTime Data { get; set; }
         public string NomeMateria { get; set; } = null!;
         public int IdMateriaPeriodo { get; set; }
-        // Quantidade de notas lançadas nessa data
         public int TotalAlunos { get; set; }
     }
 }

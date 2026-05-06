@@ -4,7 +4,6 @@ namespace PortalEscolar.Views.ViewModel
 {
     public class FrequenciaLinhaViewModel
     {
-        // ID necessário para a tabela frequencias
         public int IdMatriculaMateria { get; set; }
         public string NomeAluno { get; set; } = null!;
         public bool Presenca { get; set; }

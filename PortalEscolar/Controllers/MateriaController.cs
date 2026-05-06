@@ -94,7 +94,7 @@ namespace PortalEscolar.Controllers
        
 
         [HttpGet]
-        public async Task<IActionResult> LancarNotas(int id) // id = IdMateriaPeriodo
+        public async Task<IActionResult> LancarNotas(int id)
         {
             if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
             {
@@ -112,8 +112,6 @@ namespace PortalEscolar.Controllers
 
             return View("LancarNotas", model);
         }
-
-        // --- ÁREA DO ALUNO ---
 
         [HttpGet]
         public async Task<IActionResult> MeuBoletim()
