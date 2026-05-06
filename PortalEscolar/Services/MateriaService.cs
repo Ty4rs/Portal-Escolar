@@ -32,6 +32,7 @@ namespace PortalEscolar.Services
         Task<BoletimAlunoViewModel> GerarBoletimAluno(int idAluno);
         Task<List<GerenciarAvaliacoesViewModel>> ListarHistoricoAvaliacoes(int idProfessor);
         Task<bool> ExcluirAvaliacaoCompleta(int idMateriaPeriodo, DateTime data);
+        Task<List<Professore>> ListarProfessores();
     }
     public class MateriaService : IMateriaService
     {
@@ -100,8 +101,8 @@ namespace PortalEscolar.Services
         }
         public async Task<bool> CadastrarMatriculaMateria(MatriculaMateriaViewModel materiaPeriodo, int IdAuluno)
         {
-            var idAluno = await _context.Alunos.FirstAsync(p => p.IdUsuario == IdAuluno);
-            var matricula = await _context.Matriculas.FirstAsync(m => m.IdAluno == idAluno.IdAluno);
+            var idAluno = await _context.Alunos.FirstOrDefaultAsync(p => p.IdUsuario == IdAuluno);
+            var matricula = await _context.Matriculas.FirstOrDefaultAsync(m => m.IdAluno == idAluno.IdAluno);
             if (await _context.MatriculasMaterias.AnyAsync(mm => mm.IdMatricula == matricula.IdMatricula && mm.IdMateriaPeriodo == materiaPeriodo._idMateriaPeriodo))
             {
                 return false;
@@ -118,7 +119,10 @@ namespace PortalEscolar.Services
             return true;
         }
 
-
+        public async Task<List<Professore>> ListarProfessores()
+        {
+            return await _context.Professores.ToListAsync();
+        }
 
         public async Task<MateriaAlunoViewModel> ListarMateriasAluno(int idUsuario)
         {
@@ -146,7 +150,8 @@ namespace PortalEscolar.Services
                     IdMateria = m.IdMateria,
                     NomeMateria = m.Nome,
                     CargaHoraria = m.Cargahoraria,
-                    Sala = temp.mp.Sala
+                    Sala = temp.mp.Sala,
+                    NomeProfessor = _context.Professores.FirstOrDefault(p => p.IdProfessor == temp.mp.IdProfessor).Nome
                 }).ToList();
 
             return new MateriaAlunoViewModel
@@ -283,13 +288,19 @@ namespace PortalEscolar.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<BoletimAlunoViewModel> GerarBoletimAluno(int idAluno)
+        public async Task<BoletimAlunoViewModel> GerarBoletimAluno(int idUsuario)
         {
+            // 1. Descobre quem é o Aluno a partir do Usuário logado
+            var aluno = await _context.Alunos.FirstOrDefaultAsync(a => a.IdUsuario == idUsuario);
+
+            // Se não for aluno, retorna boletim vazio para não dar erro
+            if (aluno == null) return new BoletimAlunoViewModel { ListaBoletim = new List<BoletimAlunoViewModel>() };
+
+            // 2. Faz a busca usando o IdAluno real
             var dados = await _context.MatriculasMaterias
-                .Where(mm => mm.IdMatriculaNavigation.IdAluno == idAluno)
+                .Where(mm => mm.IdMatriculaNavigation.IdAluno == aluno.IdAluno) // AQUI ESTAVA O ERRO DE LÓGICA
                 .Select(mm => new BoletimAlunoViewModel
                 {
-
                     NomeMateria = mm.IdMateriaPeriodoNavigation.IdMateriaNavigation.Nome,
                     Notas = mm.Avaliacos.Select(a => a.NotaAvaliacao).ToList(),
                     Media = mm.Avaliacos.Any() ? mm.Avaliacos.Average(a => a.NotaAvaliacao) : 0,

@@ -2,13 +2,12 @@
 @model PortalEscolar.Views.ViewModel.MateriaAlunoViewModel
 @{
 }
-eitass
+
 @foreach (var materia in Model.Materias)
 {
-    <p>aa</p>
     <div class="card mb-3">
         <div class="card-body">
-            <h5 class="card-title">@materia.NomeMateria</h5>
+            <div class="d-flex justify-content-between"><h3 class="card-title">@materia.NomeMateria</h3>  <div class="d-flex flex-column "><p class="fw-bold">Professor:</p><span style="margin-top: -1.5rem;"> @materia.NomeProfessor</span></div></div>
             <p class="card-text">Sala: @materia.Sala</p>
         </div>
     </div> 

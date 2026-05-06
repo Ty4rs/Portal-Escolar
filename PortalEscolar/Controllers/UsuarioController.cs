@@ -134,6 +134,7 @@ namespace PortalEscolar.Controllers
             }
             else
             {
+                TempData["MensagemErro"] = "Usuário ou senha Inválidos";
                 return RedirectToAction("login", "usuario");
             }
         }

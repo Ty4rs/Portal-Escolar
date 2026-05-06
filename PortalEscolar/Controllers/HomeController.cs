@@ -18,19 +18,13 @@ namespace PortalEscolar.Controllers
         public HomeController(PortalescolarContext Context)
         {
             _context = Context;
+
         }
         public async Task<IActionResult> Index()
         {
-            return View();
+            return RedirectToAction("index", "painel");
         }
         [Authorize]
-        public IActionResult Privacy()
-        {
-            ViewData["username"] = User.Identity.Name;
-            return View();
-            
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

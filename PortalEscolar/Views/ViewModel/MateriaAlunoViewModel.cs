@@ -10,6 +10,6 @@ public class MateriaAlunoViewModel
     public string NomeMateria { get; set; } = null!;
     public int CargaHoraria { get; set; }
     public string Sala { get; set; } = null!;
-
+    public string NomeProfessor { get; set; } = null;
     public List<MateriaAlunoViewModel> Materias { get; set; } = new();
 }

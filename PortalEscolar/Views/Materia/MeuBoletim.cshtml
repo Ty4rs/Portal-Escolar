@@ -1,0 +1,89 @@
+﻿@model PortalEscolar.Views.ViewModel.BoletimAlunoViewModel
+
+@{
+    ViewData["Title"] = "Meu Boletim";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Meu Boletim Escolar</h2>
+    </div>
+
+    @if (Model == null || !Model.ListaBoletim.Any())
+    {
+        <div class="" role="alert">
+            <i class=""></i> Você ainda não possui matrículas ou avaliações registradas neste semestre.
+        </div>
+    }
+    else
+    {
+        <div class="">
+            <div class="">
+                <table class="table  mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th style="width: 25%">Disciplina</th>
+                            <th style="width: 25%">Notas das Avaliações</th>
+                            <th class="text-center" style="width: 15%">Média</th>
+                            <th class="text-center" style="width: 15%">Frequência</th>
+                            <th class="text-center" style="width: 20%">Situação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var disciplina in Model.ListaBoletim)
+                        {
+                            <tr>
+                                <td class="fw-bold align-middle">@disciplina.NomeMateria</td>
+                                
+                                <td class="align-middle">
+                                    @if (disciplina.Notas.Any())
+                                    {
+                                        @foreach (var nota in disciplina.Notas)
+                                        {
+                                            <span class="">
+                                                 @nota.ToString("F1")
+                                                
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted fst-italic">Sem avaliações</small>
+                                    }
+                                </td>
+
+                                <td class="text-center align-middle">
+                                    <span class="">
+                                        @disciplina.Media.ToString("F1")
+                                    </span>
+                                </td>
+
+                                <td class="text-center align-middle">
+                                    <span class="">
+                                        @disciplina.PorcentagemFrequencia.ToString("F1")%
+                                    </span>
+                                    <br />
+                                    <small class="" style="font-size: 0.75rem;">
+                                        Faltas: @disciplina.TotalFaltas
+                                    </small>
+                                </td>
+
+                                <td class="text-center align-middle">
+                                    
+                                    @if (disciplina.PorcentagemFrequencia < 75)
+                                    {
+                                        <span class="">Reprovado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="">Cursando</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

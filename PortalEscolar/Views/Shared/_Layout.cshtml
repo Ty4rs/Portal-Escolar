@@ -17,14 +17,14 @@
     
         @if (ViewData["LinkDisplay"] == null)
             {
-                <nav style="" class="sidebar flex-column flex-shrink-0 p-3 text-white bg-dark  top-0 start-0 vh-100 position-fixed">
-                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-4">Meu App</span>
+                <nav style="" class="d-flex sidebar flex-column flex-shrink-0 p-3 text-white bg-dark  top-0 start-0 vh-100 position-fixed">
+                    <a asp-controller="painel" asp-action="Index" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-4">Portal Escolar</span>
                     </a>
                     <hr>
 
                     <!-- Links de Navegação -->
-                    <ul class="nav nav-pills flex-column mb-auto">
+                <ul class="nav nav-pills flex-column flex-grow-1">
 
                         @if (User.IsInRole("PROFESSOR"))
                         {
@@ -34,16 +34,31 @@
                                 </a>
                             </li>
                         }
-
+                        
                         <li>
                             <a asp-action="index" asp-controller="materia" class="nav-link text-white">
                                 Minhas matérias
                             </a>
                         </li>
 
+                        @if (User.IsInRole("ALUNO"))
+                        {
+                            <li class="nav-item">
+                                <a asp-action="MeuBoletim" asp-controller="Materia" class="nav-link text-white">
+                                    Meu Boletim
+                                </a>
+                            </li>
+                        }@if (User.IsInRole("ALUNO"))
+                        {
+                            <li class="nav-item">
+                            <a asp-action="CadastrarMatriculaMateria" asp-controller="Painel" class="nav-link text-white">
+                                Matricular em matérias
+                                </a>
+                            </li>
+                        }
 
-                        <li>
-                            <a asp-action="deslogar" asp-controller="usuario" class="nav-link text-white btn bg-danger ">
+                        <li class="mt-auto">
+                            <a asp-action="deslogar" asp-controller="usuario" class="nav-link text-white btn bg-danger">
                                 ➜ ] Deslogar
                             </a>
                         </li>

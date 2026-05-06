@@ -12,13 +12,19 @@ namespace PortalEscolar.Controllers
     public class MateriaController : Controller
     {
         readonly IMateriaService _materiaService;
-        public MateriaController(IMateriaService materiaService) { 
+        readonly IUsuarioService _usuarioService;
+        public MateriaController(IMateriaService materiaService, IUsuarioService usuarioService) { 
             _materiaService = materiaService;
+            _usuarioService = usuarioService;
         }
 
         public async Task<IActionResult> Index()
         {
-            if(User.IsInRole("ALUNO"))
+            if(!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
+            if (User.IsInRole("ALUNO"))
             {
                 var materias = _materiaService.ListarMateriasAluno(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))).Result;
                 return View("AlunoIndex", materias);
@@ -36,7 +42,10 @@ namespace PortalEscolar.Controllers
         [HttpGet]
         public async Task<IActionResult> CadastrarFrequencia(int id)
         {
-            
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
             var viewModel = await _materiaService.ListarAlunosParaChamada(id);
 
             if (viewModel == null)
@@ -71,7 +80,10 @@ namespace PortalEscolar.Controllers
         [HttpGet]
         public async Task<IActionResult> VerFrequencia(int id)
         {
-            
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
             var relatorio = await _materiaService.ObterRelatorioFrequencia(id);
 
             if (relatorio == null) return NotFound();
@@ -79,11 +91,15 @@ namespace PortalEscolar.Controllers
             return View(relatorio);
         }
 
-        // --- ÁREA DO PROFESSOR ---
+       
 
         [HttpGet]
         public async Task<IActionResult> LancarNotas(int id) // id = IdMateriaPeriodo
         {
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
             var model = await _materiaService.ListarAlunosParaNotas(id);
             return View(model);
         }
@@ -102,22 +118,30 @@ namespace PortalEscolar.Controllers
         [HttpGet]
         public async Task<IActionResult> MeuBoletim()
         {
-            // Pega o ID do aluno logado no cookie
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
+            
             int idAluno = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var boletim = await _materiaService.GerarBoletimAluno(idAluno);
             return View(boletim);
         }
 
-        // GET: Ver o histórico de avaliações lançadas
+        
         [HttpGet]
         public async Task<IActionResult> VerAvaliacoes()
         {
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
             int idProfessor = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var historico = await _materiaService.ListarHistoricoAvaliacoes(idProfessor);
             return View(historico);
         }
 
-        // POST: Excluir a avaliação (e todas as notas dela)
+        
         [HttpPost]
         public async Task<IActionResult> DeletarAvaliacao(int idMateriaPeriodo, DateTime data)
         {

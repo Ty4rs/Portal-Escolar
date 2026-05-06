@@ -21,7 +21,7 @@ namespace PortalEscolar.Services
         
         Task<bool> CriarProfessor(string nome, string cpf, string formacao, decimal salario, string telefone, int idUsuario);
         Task<bool> CriarAluno(AlunoViewModel alunoModel, int UserId);
-
+        Task<bool> VerificarCadastro(int IdUsuario);
         Task<bool> MatricularAluno(AlunoViewModel alunoModel, int UserId);
     }
     public class UsuarioService : IUsuarioService
@@ -157,6 +157,14 @@ namespace PortalEscolar.Services
             return true;
         }
 
+
+        public async Task<bool> VerificarCadastro(int IdUsuario)
+        {
+            if(await _context.Alunos.AnyAsync(a => a.IdUsuario == IdUsuario) || await _context.Professores.AnyAsync(p => p.IdUsuario == IdUsuario))
+                return true;
+            ;
+            return false;
+        }
 
     }
     

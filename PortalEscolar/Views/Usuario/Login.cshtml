@@ -13,6 +13,12 @@
         <label asp-for="Senha">Senha:</label>
         <input type="password" class="form-control" asp-for="Senha" id="Senha">
         <input type="submit" value="Logar" class="btn text-bg-primary" style="margin-top: 0.7rem;">
+        @if (TempData["MensagemErro"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["MensagemErro"]
+            </div>
+        }
         <p>Não tem uma conta? <a asp-action="Cadastro" asp-controller="Usuario">Faça seu cadastro</a>.</p>
     </form>
 

@@ -13,8 +13,10 @@ namespace PortalEscolar.Controllers
     public class PainelController : Controller
     {
         readonly IMateriaService _materiaService;
-        public PainelController(IMateriaService materiaService) { 
+        readonly IUsuarioService _usuarioService;
+        public PainelController(IMateriaService materiaService, IUsuarioService usuarioService) { 
             _materiaService = materiaService;
+            _usuarioService = usuarioService;
         }
         public IActionResult Index()
         {
@@ -28,6 +30,11 @@ namespace PortalEscolar.Controllers
         [HttpPost]
         public async Task<IActionResult> CadastrarMateria(string Nome, int Cargahoraria)
         {
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
+
             if (!await _materiaService.VerificarMateria(Nome, Cargahoraria))
             {
                 await _materiaService.CadastrarMateria(Nome, Cargahoraria);
@@ -41,6 +48,11 @@ namespace PortalEscolar.Controllers
         {
             List<Materia> materiasc = await _materiaService.ListarMaterias();
             List<Periodo> periodos = await _materiaService.ListarPeriodos();
+
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
 
             MateriasViewModel materias2 = new MateriasViewModel()
             {
@@ -72,6 +84,10 @@ namespace PortalEscolar.Controllers
         [Authorize(Roles = "ALUNO")]
         public async Task<IActionResult> CadastrarMatriculaMateria()
         {
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
 
             var materiasLista = await _materiaService.ListarMaterias();
             var materiasperiodos = await _materiaService.ListarMateriasPeriodos();
@@ -80,17 +96,23 @@ namespace PortalEscolar.Controllers
                 (mp,m) => new
                 {
                     IdMateriaPeriodo = mp.IdMateriaPeriodo,
-                    NomeMateria = m.Nome
+                    NomeMateria = m.Nome,
+                    IdProfessor = mp.IdProfessor
                 }
                 ).ToList();
-
-
+            var professores = await _materiaService.ListarProfessores();
+            var materias3 = materias2.Join(professores, mp=> mp.IdProfessor, p=> p.IdProfessor, (mp, p)=> new
+            {
+                    IdMateriaPeriodo = mp.IdMateriaPeriodo,
+                    NomeMateria = mp.NomeMateria,
+                    NomeProfessor = p.Nome
+            });
             MatriculaMateriaViewModel materias = new MatriculaMateriaViewModel()
             {
                 materiasPeriodos = new SelectList(
-                    materias2.Select(m => new
+                    materias3.Select(m => new
                     {
-                        Text = m.NomeMateria,
+                        Text = $"{m.NomeMateria}  - {m.NomeProfessor}",
                         Value = m.IdMateriaPeriodo
                     }), "Value", "Text")
             };
@@ -101,11 +123,17 @@ namespace PortalEscolar.Controllers
         [HttpPost]
         public async Task<IActionResult> CadastroMatriculaMateria(MatriculaMateriaViewModel matriculaMateria)
         {
+
+            if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+            {
+                return RedirectToAction(User.FindFirstValue(ClaimTypes.Role), "usuario");
+            }
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             if (await _materiaService.CadastrarMatriculaMateria(matriculaMateria, idUsuario))
             {
-                return RedirectToAction("index", "painel");
+                return RedirectToAction("index", "materias");
             }
+            TempData["MensagemErro"] = "Já está matriculado nesta matéria.";
             return RedirectToAction("CadastrarMatriculaMateria", "painel");
         }
 

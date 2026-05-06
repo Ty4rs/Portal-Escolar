@@ -1,12 +1,15 @@
 ﻿@model PortalEscolar.Views.ViewModel.MatriculaMateriaViewModel
 @{
 }
-<div class="d-flex justify-content-center align-items-center container-fluid vh-100 bg-black" style="margin-top:-3rem">
-    <form asp-action="CadastroMatriculaMateria" asp-controller="painel" class="d-flex flex-column justify-content-center">
+<div class="d-flex justify-content-center align-items-center container-fluid vh-100 w-50 " style="margin-top:-3rem">
+    <form asp-action="CadastroMatriculaMateria" asp-controller="painel" class="d-flex flex-column justify-content-center container-fluid gap-2">
         <label asp-for="_idMateriaPeriodo">Matéria:</label>
         <select asp-for="_idMateriaPeriodo" class="form-control" asp-items="Model.materiasPeriodos"></select>
-        
-    
-        <input type="submit" value="Cadastrar Matéria">
+        @if (TempData["MensagemErro"] != null)
+        {
+            <div class="alert alert-danger">@TempData["MensagemErro"]</div>
+        }
+        <input type="submit" value="Cadastrar Matéria" class="btn btn-primary">
     </form>
 </div>
+    
