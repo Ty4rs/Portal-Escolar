@@ -1,0 +1,22 @@
+﻿@model PortalEscolar.Models.Usuario;
+@{
+    ViewData["Title"] = "Cadastro";
+    ViewData["LinkDisplay"] = true;
+}
+<div class="d-flex justify-content-center align-items-center container-fluid vh-100" style="margin-top:-3rem">
+    <form asp-action="Cadastrar" asp-controller="Usuario" method="post" class="d-flex flex-column gap-1  form-control-sm bg-light">
+    <label asp-for="Email">Email:</label>
+    <span asp-validation-for="Email" class="text-danger col-12"></span>
+    <input asp-for="Email" class="form-control" type="email" >
+    <label asp-for="Senha">Senha:</label> <span asp-validation-for="Senha" class="text-danger"></span>
+    <input asp-for="Senha" type="password" class="form-control">
+    <fieldset class="form-switch ">
+        <label asp-for="TipoUsuario">Aluno</label>
+        <input type="radio" asp-for="TipoUsuario" Value="ALUNO" checked>
+        <label asp-for="TipoUsuario">Professor</label>
+        <input type="radio" asp-for="TipoUsuario" Value="PROFESSOR">
+    </fieldset>
+    <input type="submit" value="Cadastrar Usuário" class="btn btn-primary" style="margin-top: 0.5rem;">
+    <p>Já tem uma conta? <a asp-action="Login" asp-controller="Usuario">Faça login aqui</a>.</p>
+</form>
+</div>

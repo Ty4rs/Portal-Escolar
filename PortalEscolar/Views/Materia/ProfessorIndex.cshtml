@@ -1,0 +1,38 @@
+﻿@model PortalEscolar.Views.ViewModel.MateriaProfessorViewModel
+@{
+}
+
+@foreach (var materia in Model.Materias)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@materia.NomeMateria</h5>
+            <p class="card-text">Sala: @materia.Sala</p>
+            <a asp-action="CadastrarFrequencia"
+                   asp-controller="Materia"
+                   asp-route-id="@materia.IdMateriaPeriodo"
+                   class="btn btn-primary">
+                Cadastrar Frequência
+            </a>
+            <a asp-action="VerFrequencia"
+                   asp-controller="Materia"
+                   asp-route-id="@materia.IdMateriaPeriodo"
+                   class="btn btn-primary">
+                Ver Frequência
+            </a>
+            <a asp-action="LancarNotas"
+                   asp-controller="Materia"
+                   asp-route-id="@materia.IdMateriaPeriodo"
+                   class="btn btn-primary">
+                Lançar Notas
+            </a>
+            <a asp-action="VerAvaliacoes"
+                   asp-controller="Materia"
+                   asp-route-id="@materia.IdMateriaPeriodo"
+                   class="btn btn-primary">
+                Ver Avaliações
+            </a>
+
+        </div>
+    </div>
+}

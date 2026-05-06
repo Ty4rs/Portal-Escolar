@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-Br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,41 +10,91 @@
     <link rel="stylesheet" href="~/PortalEscolar.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PortalEscolar</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - PortalEscolar - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="d-flex">
+
+    
+        @if (ViewData["LinkDisplay"] == null)
+            {
+                <nav style="" class="d-flex sidebar flex-column flex-shrink-0 p-3 text-white bg-dark  top-0 start-0 vh-100 position-fixed">
+                    <a asp-controller="painel" asp-action="Index" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-4">Portal Escolar</span>
+                    </a>
+                    <hr>
+
+
+                <ul class="nav nav-pills flex-column flex-grow-1">
+
+                        @if (User.IsInRole("PROFESSOR"))
+                        {
+                        <li class="nav-item">
+                            <a asp-action="CriarMateria" asp-controller="painel" class="nav-link text-white">
+                                Criar uma matéria
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a asp-action="CriarMateriaPeriodo" asp-controller="painel" class="nav-link text-white">
+                                    Cadastrar uma matéria - Período
+                                </a>
+                            </li>
+
+                        
+                            
+                        }
+                        
+                        <li>
+                            <a asp-action="index" asp-controller="materia" class="nav-link text-white">
+                                Minhas matérias
+                            </a>
+                        </li>
+
+                        @if (User.IsInRole("ALUNO"))
+                        {
+                            <li class="nav-item">
+                                <a asp-action="MeuBoletim" asp-controller="Materia" class="nav-link text-white">
+                                    Meu Boletim
+                                </a>
+                            </li>
+                        }@if (User.IsInRole("ALUNO"))
+                        {
+                            <li class="nav-item">
+                            <a asp-action="CadastrarMatriculaMateria" asp-controller="Painel" class="nav-link text-white">
+                                Matricular em matérias
+                                </a>
+                            </li>
+                        }
+
+                        <li class="mt-auto">
+                            <a asp-action="deslogar" asp-controller="usuario" class="nav-link text-white btn bg-danger">
+                                ➜ ] Deslogar
+                            </a>
+                        </li>
+
+
+
+                    </ul>
+                </nav>
+            }
+
+        <main class="flex-grow-1" style="margin-left: @(ViewData["LinkDisplay"] == null ? "280px; max-width: calc(100% - 280px);" : "0px;") ">
+        <div class="container-fluid p-4">
+            @RenderBody()
+
         </div>
-    </footer>
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2026 - PortalEscolar - 
+            </div>
+        </footer>
+    </main>
+    </div>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
 </body>
 </html>

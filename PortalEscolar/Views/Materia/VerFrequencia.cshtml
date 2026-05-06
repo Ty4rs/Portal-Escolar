@@ -1,0 +1,31 @@
+﻿@model PortalEscolar.Views.ViewModel.RelatorioFrequenciaViewModel
+
+<h2>Frequências: @Model.NomeMateria</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome do Aluno</th>
+            <th>Presenças</th>
+            <th>Faltas</th>
+            <th>% de Frequência</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var aluno in Model.ResumoAlunos)
+        {
+            <tr>
+                <td>@aluno.NomeAluno</td>
+                <td><span class="badge bg-success">@aluno.TotalPresencas</span></td>
+                <td><span class="badge bg-danger">@aluno.TotalFaltas</span></td>
+                <td>
+                    
+                <p >
+                    @aluno.PorcentagemPresenca.ToString("0")%
+                </p>
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

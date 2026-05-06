@@ -1,0 +1,41 @@
+﻿@model PortalEscolar.Views.ViewModel.FrequenciaPaginaViewModel
+
+<form asp-action="SalvarFrequencia" method="post">
+    <input type="hidden" asp-for="IdMateriaPeriodo" />
+    
+    <h4>Chamada - @Model.NomeMateria</h4>
+    <input type="date" asp-for="Data" class="form-control mb-3" style="width: 200px;" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Aluno</th>
+                <th>Presença</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Alunos.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.Alunos[i].NomeAluno
+                        <input type="hidden" asp-for="Alunos[i].IdMatriculaMateria" />
+                    </td>
+                    <td>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" value="true"
+                                   name="Alunos[@i].Presenca" id="p_@i" checked>
+                            <label class="form-check-label" for="p_@i">Presente</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" value="false"
+                                   name="Alunos[@i].Presenca" id="f_@i">
+                            <label class="form-check-label" for="f_@i">Faltou</label>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Finalizar Chamada</button>
+</form>

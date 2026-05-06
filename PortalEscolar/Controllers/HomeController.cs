@@ -1,22 +1,30 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PortalEscolar.Models;
 using PortalEscolar.Models.ViewModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using PortalEscolar.Data;
+using PortalEscolar.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace PortalEscolar.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        private PortalescolarContext _context;
 
-        public IActionResult Privacy()
+        public HomeController(PortalescolarContext Context)
         {
-            return View();
-        }
+            _context = Context;
 
+        }
+        public async Task<IActionResult> Index()
+        {
+            return RedirectToAction("index", "painel");
+        }
+        [Authorize]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
