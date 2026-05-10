@@ -111,6 +111,7 @@ public partial class PortalescolarContext : DbContext
 
             entity.Property(e => e.IdAvaliacao).HasColumnName("id_avaliacao");
             entity.Property(e => e.DataAvaliacao).HasColumnName("data_avaliacao");
+            entity.Property(e => e.Semestre).HasColumnName("semestre");
             entity.Property(e => e.Descricao)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -124,6 +125,7 @@ public partial class PortalescolarContext : DbContext
                 .HasForeignKey(d => d.IdMatriculaMateria)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_av_vinculo");
+            
         });
 
         modelBuilder.Entity<Curso>(entity =>
@@ -180,7 +182,7 @@ public partial class PortalescolarContext : DbContext
         modelBuilder.Entity<MateriasPeriodo>(entity =>
         {
             entity.HasKey(e => e.IdMateriaPeriodo).HasName("PK__materias__30ADAEB763EEB806");
-
+            entity.Property(e => e.Concluida).HasColumnName("concluida").HasDefaultValue(false);
             entity.ToTable("materias_periodos");
 
             entity.Property(e => e.IdMateriaPeriodo).HasColumnName("id_materia_periodo");
@@ -248,6 +250,9 @@ public partial class PortalescolarContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("status");
+            entity.Property(e => e.NotaFinal)
+                .HasColumnType("decimal(4, 2)")
+                .HasColumnName("nota_final");
 
             entity.HasOne(d => d.IdMateriaPeriodoNavigation).WithMany(p => p.MatriculasMateria)
                 .HasForeignKey(d => d.IdMateriaPeriodo)

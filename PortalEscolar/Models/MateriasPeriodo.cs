@@ -14,6 +14,7 @@ public partial class MateriasPeriodo
     public int IdProfessor { get; set; }
 
     public string Sala { get; set; } = null!;
+    public bool Concluida { get; set; }
 
     public virtual Materia IdMateriaNavigation { get; set; } = null!;
 

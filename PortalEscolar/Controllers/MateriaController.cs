@@ -150,6 +150,20 @@ namespace PortalEscolar.Controllers
             return BadRequest("Erro ao excluir avaliação.");
         }
 
+        [HttpPost]
+        [Authorize(Roles = "PROFESSOR")]
+        public async Task<IActionResult> EncerrarMateria(int idMateriaPeriodo)
+        {
+            var sucesso = await _materiaService.ConcluirMateria(idMateriaPeriodo);
+            if (sucesso)
+            {
+                return RedirectToAction("Index", "Materia");
+            }
+            return BadRequest("Erro ao encerrar a matéria.");
+        }
+
+
+
 
     }
 }

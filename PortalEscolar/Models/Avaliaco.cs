@@ -14,6 +14,7 @@ public partial class Avaliaco
     public DateOnly DataAvaliacao { get; set; }
 
     public string? Descricao { get; set; }
+    public int? Semestre { get; set; }
 
     public virtual MatriculasMateria IdMatriculaMateriaNavigation { get; set; } = null!;
 }

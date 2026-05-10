@@ -14,6 +14,7 @@ public partial class MatriculasMateria
     public DateOnly DataVinculo { get; set; }
 
     public string Status { get; set; } = null!;
+    public decimal? NotaFinal { get; set; }
 
     public virtual ICollection<Avaliaco> Avaliacos { get; set; } = new List<Avaliaco>();
 

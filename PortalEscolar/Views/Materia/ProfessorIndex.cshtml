@@ -32,6 +32,12 @@
                    class="btn btn-primary">
                 Ver Avaliações
             </a>
+            <form asp-action="EncerrarMateria" asp-controller="Materia" method="post">
+                <input type="hidden" name="idMateriaPeriodo" value="@materia.IdMateriaPeriodo" />
+                <button type="submit" class="btn btn-danger">
+                    Concluir Matéria
+                </button>
+            </form>
 
         </div>
     </div>

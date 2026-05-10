@@ -33,6 +33,7 @@ namespace PortalEscolar.Services
         Task<List<GerenciarAvaliacoesViewModel>> ListarHistoricoAvaliacoes(int idProfessor);
         Task<bool> ExcluirAvaliacaoCompleta(int idMateriaPeriodo, DateTime data);
         Task<List<Professore>> ListarProfessores();
+        Task<bool> ConcluirMateria(int idMateriaPeriodo);
     }
     public class MateriaService : IMateriaService
     {
@@ -357,6 +358,45 @@ namespace PortalEscolar.Services
                 _context.Avaliacoes.RemoveRange(notasParaRemover);
                 return await _context.SaveChangesAsync() > 0;
             }
+
+
+        public async Task<bool> ConcluirMateria(int idMateriaPeriodo)
+        {
+            // 1. Pega a matéria e todos os alunos vinculados a ela
+            var materiaPeriodo = await _context.MateriasPeriodos
+                .Include(mp => mp.MatriculasMateria)
+                    .ThenInclude(mm => mm.Avaliacos) // Para somar as notas
+                .Include(mp => mp.MatriculasMateria)
+                    .ThenInclude(mm => mm.Frequencia) // Para contar as faltas
+                .FirstOrDefaultAsync(mp => mp.IdMateriaPeriodo == idMateriaPeriodo);
+
+            if (materiaPeriodo == null) return false;
+
+            foreach (var matricula in materiaPeriodo.MatriculasMateria)
+            {
+                // 2. Calcula a Média
+                decimal somaNotas = matricula.Avaliacos.Sum(a => a.NotaAvaliacao);
+
+                // 3. Calcula a Frequência (Ex: total de aulas vs presenças)
+                int totalAulas = matricula.Frequencia.Count;
+                int presencas = matricula.Frequencia.Count(f => f.Presenca);
+                double freq = totalAulas > 0 ? (double)presencas / totalAulas * 100 : 100;
+
+                // 4. Regra de Negócio (Ex: Média 6.0 e Frequência 75%)
+                if (somaNotas >= (decimal)6.0 && freq >= 75)
+                    matricula.Status = "APROVADO";
+                else
+                    matricula.Status = "REPROVADO";
+
+                matricula.NotaFinal = somaNotas; // Salva para o relatório ser rápido
+            }
+
+            // 5. Marca a matéria como concluída para o professor não mexer mais
+            materiaPeriodo.Concluida = true;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
     }
     }
