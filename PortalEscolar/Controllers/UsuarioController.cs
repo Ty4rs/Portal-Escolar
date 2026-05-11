@@ -111,7 +111,7 @@ namespace PortalEscolar.Controllers
             int UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             if(!await _usuarioService.CriarAluno(alunoModel, UserId))
             {
-                TempData["ErrorAluno"] = "Aluno já cadastrado!";
+                TempData["ErrorAluno"] = "Aluno já cadastrado ou dados inválidos!";
                 return RedirectToAction("aluno", "usuario");
             }
             await _usuarioService.MatricularAluno(alunoModel, UserId);

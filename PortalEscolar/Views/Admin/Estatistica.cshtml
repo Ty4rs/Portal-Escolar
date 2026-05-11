@@ -1,0 +1,75 @@
+﻿@model PortalEscolar.Views.ViewModel.Admin.EstatisticaViewModel
+
+
+
+<div class="d-flex gap-3 w-100">
+    <div class="flex-fill  text-white  text-center">
+        <div class="container vw-10" style="height: 400px;margin:0; width:50vw;">
+            <div id="container-grafico"></div>
+        </div>
+    </div>
+
+    <div class="flex-fill  text-white  text-center">
+        <div class="container" style="height: 400px;margin-left:-2rem; width:26vw;">
+        <div id="container-reprovacoes"></div>
+        </div>
+    </div>
+
+</div>
+<div class="d-flex gap-2 w-100 h-50 justify-items-center p-5" style="margin-top: -2rem;">
+    <div class="container card justify-content-center align-items-center">
+        <h5 class="text-center ">Quantidade de alunos</h5>
+        <p class="text-center fs-1 bg-light rounded-circle w-25">@ViewBag.Usuarios</p>
+    </div>
+    <div class="container card justify-content-center align-items-center">
+        <h5 class="text-center ">Quantidade de Alunos</h5>
+        <p class="text-center fs-1 bg-light rounded-circle w-25">@ViewBag.Alunos</p>
+    </div>
+    <div class="container card justify-content-center align-items-center">
+        <h5 class="text-center ">Quantidade de Professores</h5>
+        <p class="text-center fs-1 bg-light rounded-circle w-25">@ViewBag.Professores</p>
+    </div>
+
+</div>
+
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+       
+        const categoriasCursos = @Html.Raw(Json.Serialize(ViewBag.Cursos ?? new List<string>()));
+        const valoresMedias = @Html.Raw(Json.Serialize(ViewBag.Medias ?? new List<decimal>()));
+
+        Highcharts.chart('container-grafico', {
+            chart: { type: 'column' },
+            title: { text: 'Média de Desempenho por Curso' },
+            xAxis: { categories: categoriasCursos },
+            yAxis: { min: 0, max: 10, title: { text: 'Média' } },
+            series: [{
+                name: 'Média Geral',
+                data: valoresMedias
+            }]
+        });
+
+        const nomesMaterias = @Html.Raw(Json.Serialize(ViewBag.NomesMaterias ?? new List<string>()));
+        const qtdReprovados = @Html.Raw(Json.Serialize(ViewBag.QtdReprovados ?? new List<int>()));
+
+        Highcharts.chart('container-reprovacoes', {
+            chart: { type: 'bar' },
+            title: { text: 'Matérias com Mais Reprovações' },
+            xAxis: { categories: nomesMaterias },
+            yAxis: { min: 0, title: { text: 'Qtd. Alunos' } },
+            series: [{
+                name: 'Reprovados',
+                data: qtdReprovados,
+                color: '#e74c3c'
+            }]
+        });
+
+    }); 
+</script>

@@ -1,0 +1,40 @@
+﻿@model PortalEscolar.Views.ViewModel.Admin.GerenciarProfessoresViewModel
+@{
+}
+
+<div class="container mt-4">
+    <h2>Gerenciar Professores</h2>
+    @if (Model.Professores == null || !Model.Professores.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            Nenhum aluno encontrado.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 80%">Nome</th>
+                    
+                    <th style="width: 25%">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var professor in Model.Professores)
+                {
+                    <tr>
+                        <td>@professor.Nome</td>
+                        <td>
+                            
+                            
+                            <form asp-action="ExcluirProfessor" asp-route-id="@professor.IdProfessor" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

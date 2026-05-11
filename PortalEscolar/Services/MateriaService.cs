@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http; // Preciso pra usar os cookies
+using Microsoft.AspNetCore.Http; 
 using Microsoft.EntityFrameworkCore;
 using PortalEscolar.Data;
 using PortalEscolar.Models;
@@ -19,7 +19,7 @@ namespace PortalEscolar.Services
         Task<List<Curso>> ListarCursos();
 
         Task<bool> CadastrarMateriaPeriodo(MateriasViewModel materiaPeriodo, int IdProfessor);
-        Task<List<MateriasPeriodo>> ListarMateriasPeriodos();
+        Task<List<MateriasPeriodo>> ListarMateriasPeriodos(int idUser);
         Task<bool> CadastrarMatriculaMateria(MatriculaMateriaViewModel materiaPeriodo, int IdAuluno);
         Task<MateriaAlunoViewModel> ListarMateriasAluno(int idAluno);
         Task<MateriaProfessorViewModel> ListarMateriasProfessor(int idProfessor);
@@ -27,7 +27,6 @@ namespace PortalEscolar.Services
         Task<bool> SalvarFrequencia(FrequenciaPaginaViewModel model);
         Task<RelatorioFrequenciaViewModel> ObterRelatorioFrequencia(int idMateriaPeriodo);
         Task<LancarNotaPaginaViewModel> ListarAlunosParaNotas(int idMateriaPeriodo);
-
         Task<bool> SalvarNotas(LancarNotaPaginaViewModel model);
         Task<BoletimAlunoViewModel> GerarBoletimAluno(int idAluno);
         Task<List<GerenciarAvaliacoesViewModel>> ListarHistoricoAvaliacoes(int idProfessor);
@@ -88,6 +87,7 @@ namespace PortalEscolar.Services
                 IdMateria = materiaPeriodo.idMateria,
                 IdPeriodo = materiaPeriodo.IdPeriodo,
                 IdProfessor = IdProfessor,
+                IdCurso = materiaPeriodo._idCurso,
                 Sala = materiaPeriodo.Sala
 
             };
@@ -96,9 +96,17 @@ namespace PortalEscolar.Services
             return true;
         }
 
-        public async Task<List<MateriasPeriodo>> ListarMateriasPeriodos()
+        public async Task<List<MateriasPeriodo>> ListarMateriasPeriodos(int idUser)
         {
-            return await _context.MateriasPeriodos.ToListAsync();
+            
+            var matricula = await _context.Matriculas.FirstOrDefaultAsync(m => m.IdAlunoNavigation.IdUsuario == idUser);
+            if (matricula == null)
+            {
+                return new List<MateriasPeriodo>();
+            }
+
+
+            return await _context.MateriasPeriodos.Where(mp => mp.Concluida == false && mp.IdCurso == matricula.IdCurso).ToListAsync();
         }
         public async Task<bool> CadastrarMatriculaMateria(MatriculaMateriaViewModel materiaPeriodo, int IdAuluno)
         {
@@ -134,7 +142,7 @@ namespace PortalEscolar.Services
 
             var materiasMatriculadas = await _context.MatriculasMaterias
                 .Where(mm => mm.IdMatricula == matricula.IdMatricula).ToListAsync();
-            var materiasPeriodo = await _context.MateriasPeriodos.ToListAsync();
+            var materiasPeriodo = await _context.MateriasPeriodos.Where(mp=> mp.Concluida == false).ToListAsync();
             var materias = await _context.Materias.ToListAsync();
 
             var listaResultado = materiasMatriculadas.Join(materiasPeriodo,
@@ -167,6 +175,7 @@ namespace PortalEscolar.Services
             int idProfessor = idProfessorC.IdProfessor;
             var materiasPeriodo = await _context.MateriasPeriodos
                 .Where(mp => mp.IdProfessor == idProfessor)
+                .Where(mp=> mp.Concluida == false)
                 .ToListAsync();
 
             var materias = await _context.Materias.ToListAsync();
@@ -181,7 +190,8 @@ namespace PortalEscolar.Services
                     IdMateria = m.IdMateria,
                     NomeMateria = m.Nome,
                     CargaHoraria = m.Cargahoraria,
-                    Sala = mp.Sala
+                    Sala = mp.Sala,
+                    NomeCurso = _context.Cursos.FirstOrDefault(c => c.IdCurso == mp.IdCurso).Nome
                 }).ToList();
 
             
@@ -229,7 +239,7 @@ namespace PortalEscolar.Services
         public async Task<RelatorioFrequenciaViewModel> ObterRelatorioFrequencia(int idMateriaPeriodo)
         {
             
-            var materia = await _context.MateriasPeriodos
+            var materia = await _context.MateriasPeriodos.Where(mp=> mp.Concluida==true)
                 .Include(mp => mp.IdMateriaNavigation)
                 .FirstOrDefaultAsync(mp => mp.IdMateriaPeriodo == idMateriaPeriodo);
 
@@ -309,7 +319,8 @@ namespace PortalEscolar.Services
                     TotalFaltas = mm.Frequencia.Count(f => !f.Presenca),
                     PorcentagemFrequencia = mm.Frequencia.Any()
                         ? (double)mm.Frequencia.Count(f => f.Presenca) / mm.Frequencia.Count() * 100
-                        : 100
+                        : 100,
+                    Situacao = mm.Status.ToString(),
                 }).ToListAsync();
 
             return new BoletimAlunoViewModel { ListaBoletim = dados };
@@ -362,41 +373,35 @@ namespace PortalEscolar.Services
 
         public async Task<bool> ConcluirMateria(int idMateriaPeriodo)
         {
-            // 1. Pega a matéria e todos os alunos vinculados a ela
+            
             var materiaPeriodo = await _context.MateriasPeriodos
                 .Include(mp => mp.MatriculasMateria)
-                    .ThenInclude(mm => mm.Avaliacos) // Para somar as notas
+                    .ThenInclude(mm => mm.Avaliacos) 
                 .Include(mp => mp.MatriculasMateria)
-                    .ThenInclude(mm => mm.Frequencia) // Para contar as faltas
+                    .ThenInclude(mm => mm.Frequencia) 
                 .FirstOrDefaultAsync(mp => mp.IdMateriaPeriodo == idMateriaPeriodo);
 
             if (materiaPeriodo == null) return false;
 
             foreach (var matricula in materiaPeriodo.MatriculasMateria)
             {
-                // 2. Calcula a Média
                 decimal somaNotas = matricula.Avaliacos.Sum(a => a.NotaAvaliacao);
 
-                // 3. Calcula a Frequência (Ex: total de aulas vs presenças)
                 int totalAulas = matricula.Frequencia.Count;
                 int presencas = matricula.Frequencia.Count(f => f.Presenca);
                 double freq = totalAulas > 0 ? (double)presencas / totalAulas * 100 : 100;
 
-                // 4. Regra de Negócio (Ex: Média 6.0 e Frequência 75%)
                 if (somaNotas >= (decimal)6.0 && freq >= 75)
                     matricula.Status = "APROVADO";
                 else
                     matricula.Status = "REPROVADO";
-
-                matricula.NotaFinal = somaNotas; // Salva para o relatório ser rápido
+                matricula.NotaFinal = somaNotas; 
             }
-
-            // 5. Marca a matéria como concluída para o professor não mexer mais
             materiaPeriodo.Concluida = true;
-
             await _context.SaveChangesAsync();
             return true;
         }
+        
 
     }
     }

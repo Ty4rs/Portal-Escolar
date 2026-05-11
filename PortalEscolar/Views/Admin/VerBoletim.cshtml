@@ -1,18 +1,19 @@
 ﻿@model PortalEscolar.Views.ViewModel.BoletimAlunoViewModel
 
 @{
-    ViewData["Title"] = "Meu Boletim";
+    ViewData["Title"] = "Ver Boletim";
 }
+
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Meu Boletim Escolar</h2>
+        <h2>Boletim do Aluno</h2>
     </div>
 
     @if (Model == null || !Model.ListaBoletim.Any())
     {
         <div class="" role="alert">
-            <i class=""></i> Você ainda não possui matrículas ou avaliações registradas neste semestre.
+            <i class=""></i> Este aluno ainda não possui matrículas ou avaliações registradas neste semestre.
         </div>
     }
     else

@@ -22,7 +22,7 @@ namespace PortalEscolar.Controllers
         {
             return View();
         }
-        [Authorize(Roles = "PROFESSOR")]
+        [Authorize(Roles = "ADMIN")]
         public IActionResult CriarMateria()
         {
             return View();
@@ -48,6 +48,7 @@ namespace PortalEscolar.Controllers
         {
             List<Materia> materiasc = await _materiaService.ListarMaterias();
             List<Periodo> periodos = await _materiaService.ListarPeriodos();
+            List<Curso> cursos = await _materiaService.ListarCursos();
 
             if (!await _usuarioService.VerificarCadastro(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
             {
@@ -67,6 +68,12 @@ namespace PortalEscolar.Controllers
                     {
                         Text = m.Nome,
                         Value = m.IdPeriodo
+                    }), "Value", "Text"),
+                cursos = new SelectList(
+                    cursos.Select(m => new
+                    {
+                        Text = m.Nome,
+                        Value = m.IdCurso
                     }), "Value", "Text")
             };
             return View(materias2);
@@ -90,7 +97,7 @@ namespace PortalEscolar.Controllers
             }
 
             var materiasLista = await _materiaService.ListarMaterias();
-            var materiasperiodos = await _materiaService.ListarMateriasPeriodos();
+            var materiasperiodos = await _materiaService.ListarMateriasPeriodos(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             var materias2 = materiasperiodos.Join(materiasLista, mp => mp.IdMateria,
                 m=> m.IdMateria,
                 (mp,m) => new

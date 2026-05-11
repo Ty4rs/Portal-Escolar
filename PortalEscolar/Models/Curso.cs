@@ -12,4 +12,5 @@ public partial class Curso
     public string Duracao { get; set; } = null!;
 
     public virtual ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();
+    public virtual ICollection<MateriasPeriodo> MateriasPeriodos { get; set; } = new List<MateriasPeriodo>();
 }

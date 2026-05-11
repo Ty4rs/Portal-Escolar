@@ -15,6 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor(); //dizendo que os meus servicos podem acessar os meus cookies pra pegar o id do usuario logado
 builder.Services.AddScoped<IUsuarioService, UsuarioService>(); //Adicionando um servico que eu crieoi
 builder.Services.AddScoped<IMateriaService, MateriaService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 { //adicionando o cookie como forma de autenticação

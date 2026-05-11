@@ -194,6 +194,14 @@ public partial class PortalescolarContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("sala");
 
+            entity.Property(e => e.IdCurso).HasColumnName("id_curso");
+
+            entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.MateriasPeriodos)
+                .HasForeignKey(d => d.IdCurso)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_matper_curso");
+
+
             entity.HasOne(d => d.IdMateriaNavigation).WithMany(p => p.MateriasPeriodos)
                 .HasForeignKey(d => d.IdMateria)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -250,6 +258,7 @@ public partial class PortalescolarContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("status");
+
             entity.Property(e => e.NotaFinal)
                 .HasColumnType("decimal(4, 2)")
                 .HasColumnName("nota_final");

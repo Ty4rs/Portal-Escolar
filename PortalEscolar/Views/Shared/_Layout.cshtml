@@ -26,13 +26,33 @@
 
                 <ul class="nav nav-pills flex-column flex-grow-1">
 
-                        @if (User.IsInRole("PROFESSOR"))
+                        @if (User.IsInRole("ADMIN"))
                         {
                         <li class="nav-item">
                             <a asp-action="CriarMateria" asp-controller="painel" class="nav-link text-white">
                                 Criar uma matéria
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a asp-action="GerenciarProfessores" asp-controller="Admin" class="nav-link text-white">
+                                Gerenciar Professores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="Estatistica" asp-controller="Admin" class="nav-link text-white">
+                                Estatística
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="CriarCurso" asp-controller="Admin" class="nav-link text-white">
+                                Gerenciar Cursos
+                            </a>
+                        </li>
+                        }
+                        
+                        @if (User.IsInRole("PROFESSOR"))
+                        {
+                        
                             <li class="nav-item">
                                 <a asp-action="CriarMateriaPeriodo" asp-controller="painel" class="nav-link text-white">
                                     Cadastrar uma matéria - Período
@@ -42,12 +62,19 @@
                         
                             
                         }
-                        
+                        @if (User.IsInRole("PROFESSOR") || User.IsInRole("ALUNO"))
+                        {
                         <li>
                             <a asp-action="index" asp-controller="materia" class="nav-link text-white">
                                 Minhas matérias
                             </a>
                         </li>
+                        }
+                    <li>
+                        <a asp-action="GerenciarAlunos" asp-controller="Admin" class="nav-link text-white">
+                            Gerenciar Alunos
+                        </a>
+                    </li>
 
                         @if (User.IsInRole("ALUNO"))
                         {

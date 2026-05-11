@@ -136,6 +136,10 @@ namespace PortalEscolar.Services
             {
                 return false;
             }
+            if(await _context.Alunos.AnyAsync(a => a.Cpf == alunoModel.Cpf))
+            {
+                return false;
+            }
             Aluno aluno = new Aluno()
             {
                Nome=alunoModel.Nome, Cpf=alunoModel.Cpf, DataNascimento = DateOnly.FromDateTime(alunoModel.DataNascimento), Telefone=alunoModel.Telefone, IdUsuario= UserId, Endereco=alunoModel.Endereco
